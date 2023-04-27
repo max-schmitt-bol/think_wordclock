@@ -1,3 +1,15 @@
+#include <TimeLib.h>
+
+#include <TimeLib.h>
+
+#include <TimeLib.h>
+
+#include <Adafruit_GFX.h>
+#include <Adafruit_GrayOLED.h>
+#include <Adafruit_SPITFT.h>
+#include <Adafruit_SPITFT_Macros.h>
+#include <gfxfont.h>
+
 /*
  * Sourcecode for wordclock (german)
  * 
@@ -36,12 +48,12 @@ char date_s[11];
 #define HEIGHT (10+1)           // height of LED matrix + additional row for minute leds
 #define EE_ADDRESS_TIME 10      // eeprom address for time value (persist values during power off)
 #define EE_ADDRESS_COLOR 20     // eeprom address for color value (persist values during power off)
-#define UPPER_LIGHT_THRSH 930   // upper threshold for lightsensor (above this value brightness is always 20%)
-#define LOWER_LIGHT_THRSH 800   // lower threshold for lightsensor (below this value brightness is always 100%)
+#define UPPER_LIGHT_THRSH 1020   // upper threshold for lightsensor (above this value brightness is always 20%)
+#define LOWER_LIGHT_THRSH 0   // lower threshold for lightsensor (below this value brightness is always 100%)
 #define CENTER_ROW (HEIGHT/2)   // id of center row
 #define CENTER_COL (WIDTH/2)    // id of center column
-#define NIGHTMODE_START 22      // start hour of nightmode (22 <=> 22:00)
-#define NIGHTMODE_END 6         // end hour of nightmode (6 <=> 6:00)
+#define NIGHTMODE_START 3      // start hour of nightmode (3 <=> 3:00)
+#define NIGHTMODE_END 4         // end hour of nightmode (4 <=> 4:00)
 
 // create DCF77 object  
 DCF77 DCF = DCF77(DCF_PIN,digitalPinToInterrupt(DCF_PIN));
@@ -60,13 +72,14 @@ Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(WIDTH, HEIGHT, NEOPIXEL_PIN,
 
 // define color modes
 const uint16_t colors[] = {
-  matrix.Color(255, 255, 255),  // white (in this mode together with colorwheel)
+  //matrix.Color(255, 255, 255),  // white (in this mode together with colorwheel)
   matrix.Color(255, 0, 0),      // red
   matrix.Color(255, 255, 0),    // yellow
   matrix.Color(255, 0, 200),    // magenta
   matrix.Color(128, 128, 128),  // white (darker)
   matrix.Color(0, 255, 0),      // green 
   matrix.Color(0, 0, 255) };    // blue
+  //matrix.Color(255, 165, 0)   // orange
 
 // definition of global variables
 int valLight = 100;             // currentvalue of light sensor
@@ -130,7 +143,7 @@ void setup() {
 
     // measure DCF signal quality
     int dcfquality = checkDCFSignal();
-    
+   
     // show DCF quality as a red/green bar
     uint16_t dcfcolor = dcfquality < 5 ? matrix.Color(255, 0, 0): matrix.Color(0, 255, 0);
     for(int i=0; i<WIDTH; i++){
@@ -170,6 +183,7 @@ void setup() {
 }
 
 void loop() {
+  
   // get light value from light sensor
   valLight = analogRead(SENSOR_PIN);
 
@@ -246,7 +260,7 @@ void loop() {
   if(activeColorID == 0){
     delay(500);
   } else {
-    delay(5000);
+    delay(1000);
   }
   
 }
@@ -488,23 +502,27 @@ void timeToArray(uint8_t hours,uint8_t minutes){
   else if(minutes >= 20 && minutes < 25)
   {
   
-      //Zehn
-      Serial.print("ZEHN ");
-      gridAddPixel(0,1);
-      gridAddPixel(1,1);
-      gridAddPixel(2,1);
-      gridAddPixel(3,1);
-      //Vor
-      Serial.print("VOR ");
-      gridAddPixel(0,3);
-      gridAddPixel(1,3);
-      gridAddPixel(2,3);
+      //Zwanzig
+      Serial.print("ZWANZIG ");
+      gridAddPixel(4,1);
+      gridAddPixel(5,1);
+      gridAddPixel(6,1);
+      gridAddPixel(7,1);
+      gridAddPixel(8,1);
+      gridAddPixel(9,1);
+      gridAddPixel(10,1);
+      //Nach
+      Serial.print("NACH ");
+      gridAddPixel(7,3);
+      gridAddPixel(8,3);
+      gridAddPixel(9,3);
+      gridAddPixel(10,3);
       //Halb
-      Serial.print("HALB ");
-      gridAddPixel(0,4);
-      gridAddPixel(1,4);
-      gridAddPixel(2,4);
-      gridAddPixel(3,4);
+      //Serial.print("HALB ");
+      //gridAddPixel(0,4);
+      //gridAddPixel(1,4);
+      //gridAddPixel(2,4);
+      //gridAddPixel(3,4);
   
   }
   else if(minutes >= 25 && minutes < 30)
@@ -559,24 +577,27 @@ void timeToArray(uint8_t hours,uint8_t minutes){
   }
   else if(minutes >= 40 && minutes < 45)
   {
-      //Zehn
-      Serial.print("ZEHN ");
-      gridAddPixel(0,1);
-      gridAddPixel(1,1);
-      gridAddPixel(2,1);
-      gridAddPixel(3,1);
-      //Nach
-      Serial.print("NACH ");
-      gridAddPixel(7,3);
-      gridAddPixel(8,3);
-      gridAddPixel(9,3);
-      gridAddPixel(10,3);
+      //Zwanzig
+      Serial.print("ZWANZIG ");
+      gridAddPixel(4,1);
+      gridAddPixel(5,1);
+      gridAddPixel(6,1);
+      gridAddPixel(7,1);
+      gridAddPixel(8,1);
+      gridAddPixel(9,1);
+      gridAddPixel(10,1);
+      //Vor
+      Serial.print("VOR ");
+      gridAddPixel(0,3);
+      gridAddPixel(1,3);
+      gridAddPixel(2,3);
+
       //Halb
-      Serial.print("HALB ");
-      gridAddPixel(0,4);
-      gridAddPixel(1,4);
-      gridAddPixel(2,4);
-      gridAddPixel(3,4);
+      //Serial.print("HALB ");
+      //gridAddPixel(0,4);
+      //gridAddPixel(1,4);
+      //gridAddPixel(2,4);
+      //gridAddPixel(3,4);
   }
   else if(minutes >= 45 && minutes < 50)
   {
@@ -634,25 +655,25 @@ void timeToArray(uint8_t hours,uint8_t minutes){
             break;
               
           case 1:
-            gridAddPixel(0,10);
+            gridAddPixel(3,10);
             break;
 
           case 2:
-            gridAddPixel(0,10);
-            gridAddPixel(1,10);
+            gridAddPixel(3,10);
+            gridAddPixel(2,10);
             break;
 
           case 3:
-            gridAddPixel(0,10);
-            gridAddPixel(1,10);
+            gridAddPixel(3,10);
             gridAddPixel(2,10);
+            gridAddPixel(1,10);
             break;
 
           case 4:
-            gridAddPixel(0,10);
-            gridAddPixel(1,10);
-            gridAddPixel(2,10);
             gridAddPixel(3,10);
+            gridAddPixel(2,10);
+            gridAddPixel(1,10);
+            gridAddPixel(0,10);
             break;
         }
   }
@@ -662,7 +683,7 @@ void timeToArray(uint8_t hours,uint8_t minutes){
   {
       hours -= 12;
   }
-  if(minutes >= 20)
+  if(minutes >= 25)
   {
       hours++;
   }
