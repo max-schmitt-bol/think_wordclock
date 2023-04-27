@@ -38,6 +38,7 @@
 #define NEOPIXEL_PIN 6          // Connection pin to Neopixel LED strip
 #define SENSOR_PIN A6           // analog input pin for light sensor
 #define PIR_PIN 4               // Connection pin to PIR device (HC-SR501, Jumper on H = Repeatable Trigger)
+#define TOUCH_PIN 7             // digital input pin for touch sensor (TTP223)
 
 // char array to save time an date as string
 char time_s[9];
@@ -88,6 +89,7 @@ uint8_t activeColorID = 0;      // current active color mode
 int offset = 0;                 // offset for colorwheel
 long updateIntervall = 120000;  // Updateintervall 2 Minuten
 long updateTimer = 0;           // Zwischenspeicher für die Wartezeit
+int touchState = LOW;           // state of touch sensor (toggle between HIGH and LOW)
 
 // representation of matrix as byte array (1 led = 1 bit) 
 uint8_t grid[HEIGHT*WIDTH/8 + 1] = {0};
@@ -183,6 +185,20 @@ void setup() {
 }
 
 void loop() {
+  // get touch state value from touch sensor
+  int newTouchState = digitalRead(TOUCH_PIN);
+
+  if (newTouchState == HIGH) {
+    touchState = newTouchState;
+    // enable all LEDs on matrix
+    //  - check brightness value (maybe hardcoded value)
+    //  - check color value (maybe hardcoded value)
+    // don't do anything else
+  } else if (touchState == HIGH && newTouchState == LOW) {
+    touchState = newTouchState;
+    // disable all LEDs on matrix for 2 seconds
+    // show clock as usual
+  }
   
   // get light value from light sensor
   valLight = analogRead(SENSOR_PIN);
@@ -256,13 +272,7 @@ void loop() {
   // send the commands to the LEDs
   matrix.show();
 
-  // change depending on color mode the refreshing time of clock
-  if(activeColorID == 0){
-    delay(500);
-  } else {
-    delay(1000);
-  }
-  
+  delay(500);
 }
 
 // Draws a 360 degree colorwheel on the matrix rotated by offset
