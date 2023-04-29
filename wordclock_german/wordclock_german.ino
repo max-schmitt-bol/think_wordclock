@@ -188,16 +188,24 @@ void loop() {
   // get touch state value from touch sensor
   int newTouchState = digitalRead(TOUCH_PIN);
 
+  bool lightmode = false;
   if (newTouchState == HIGH) {
-    touchState = newTouchState;
     // enable all LEDs on matrix
     //  - check brightness value (maybe hardcoded value)
     //  - check color value (maybe hardcoded value)
     // don't do anything else
-  } else if (touchState == HIGH && newTouchState == LOW) {
     touchState = newTouchState;
-    // disable all LEDs on matrix for 2 seconds
+    lightmode = true;
+  } else if (touchState == HIGH && newTouchState == LOW) {
+    // disable all LEDs on matrix for 3 seconds
     // show clock as usual
+
+    touchState = newTouchState;
+
+    // clear matrix and show for 3 seconds
+    matrix.fillScreen(matrix.Color(0, 0, 0));
+    matrix.show();
+    delay(3000);
   }
   
   // get light value from light sensor
@@ -252,7 +260,7 @@ void loop() {
     nightmode = true;
   }
   
-  if(!nightmode){
+  if(!nightmode && !lightmode){
     // nightmode is not active -> draw on Matrix, as normal
     
     // if color mode is set to 0, a color wheel will be shown in background
@@ -264,6 +272,12 @@ void loop() {
 
     // draw grid representation of time to matrix
     drawOnMatrix();
+  }
+  else if(lightmode){
+    Serial.println("Lightmode active -> LED ON");
+
+    // enable all LEDs on matrix to use it as a light
+    matrix.fillScreen(matrix.Color(255, 255, 255));
   }
   else{
     Serial.println("Nightmode active -> LED OFF");
