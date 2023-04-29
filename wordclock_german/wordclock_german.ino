@@ -45,7 +45,7 @@ char time_s[9];
 char date_s[11];
 
 // define parameters for the project
-#define WIDTH 11                // width of LED matirx
+#define WIDTH 11                // width of LED matrix
 #define HEIGHT (10+1)           // height of LED matrix + additional row for minute leds
 #define EE_ADDRESS_TIME 10      // eeprom address for time value (persist values during power off)
 #define EE_ADDRESS_COLOR 20     // eeprom address for color value (persist values during power off)
@@ -262,7 +262,7 @@ void loop() {
       offset = (offset + 1)%256;
     }
 
-    // draw grid reprentation of time to matrix
+    // draw grid representation of time to matrix
     drawOnMatrix();
   }
   else{
